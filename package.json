@@ -1,0 +1,38 @@
+{
+  "name": "com.adshift.sdk",
+  "version": "1.0.0",
+  "displayName": "AdShift SDK",
+  "description": "Mobile Attribution SDK for Unity - Install tracking, event analytics, SKAdNetwork 4.0+, deep linking, and GDPR/TCF 2.2 compliance.",
+  "unity": "2022.3",
+  "unityRelease": "0f1",
+  "documentationUrl": "https://dev.adshift.com/docs/unity-sdk",
+  "changelogUrl": "https://github.com/AdShift/unity_plugin/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/AdShift/unity_plugin/blob/main/LICENSE",
+  "keywords": [
+    "attribution",
+    "analytics",
+    "mobile",
+    "skadnetwork",
+    "deep-linking",
+    "gdpr",
+    "advertising"
+  ],
+  "author": {
+    "name": "AdShift",
+    "email": "support@adshift.com",
+    "url": "https://adshift.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AdShift/unity_plugin.git"
+  },
+  "dependencies": {},
+  "samples": [
+    {
+      "displayName": "Basic Example",
+      "description": "Demonstrates basic SDK usage with UI buttons for testing all features",
+      "path": "Samples~/BasicExample"
+    }
+  ]
+}
+

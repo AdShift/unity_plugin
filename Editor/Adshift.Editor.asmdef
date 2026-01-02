@@ -1,0 +1,19 @@
+{
+  "name": "Adshift.Editor",
+  "rootNamespace": "Adshift.Editor",
+  "references": [
+    "Adshift"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
+

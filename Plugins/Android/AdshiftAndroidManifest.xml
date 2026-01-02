@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AdShift SDK Android Manifest
+  
+  This manifest is merged with the main app manifest during build.
+  It declares permissions and components required by the SDK.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.adshift.sdk.unity">
+
+    <!-- Required Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
+    <!-- Optional: For Google Advertising ID -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+
+    <application>
+        <!-- 
+          Install Referrer Receiver
+          Captures install referrer data from Google Play Store
+        -->
+        <receiver
+            android:name="com.adshift.sdk.core.attribution.InstallReferrerReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+        
+        <!--
+          Deep Link Activity (optional - app should configure its own)
+          Uncomment and modify if you want SDK to handle deep links directly
+        -->
+        <!--
+        <activity
+            android:name="com.adshift.sdk.unity.DeepLinkActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="rightlink.me" />
+            </intent-filter>
+        </activity>
+        -->
+    </application>
+
+</manifest>
+

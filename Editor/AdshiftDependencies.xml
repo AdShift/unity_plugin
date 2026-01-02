@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dependencies>
+  
+  <!-- 
+    AdShift SDK Dependencies for Unity
+    
+    This file is used by External Dependency Manager for Unity (EDM4U)
+    to automatically resolve native SDK dependencies.
+    
+    iOS: Fetches from CocoaPods (Git-based podspec)
+    Android: Fetches from Maven Central
+  -->
+
+  <!-- Android Dependencies (Maven Central) -->
+  <androidPackages>
+    <!-- AdShift Android SDK -->
+    <androidPackage spec="com.adshift:android-sdk:2.0.2">
+      <repositories>
+        <repository>https://repo1.maven.org/maven2</repository>
+      </repositories>
+    </androidPackage>
+    
+    <!-- Install Referrer (transitive, but explicit for clarity) -->
+    <androidPackage spec="com.android.installreferrer:installreferrer:2.2">
+    </androidPackage>
+  </androidPackages>
+
+  <!-- iOS Dependencies (CocoaPods) -->
+  <iosPods>
+    <!-- 
+      AdShift iOS SDK
+      Using Git-based podspec until published to CocoaPods trunk
+    -->
+    <iosPod name="AdshiftSDK" version="1.0.0" minTargetSdk="15.0">
+      <!-- 
+        For Git-based podspec, users need to add to their Podfile:
+        pod 'AdshiftSDK', :podspec => 'https://raw.githubusercontent.com/AdShift/ios-sdk/v1.0.0/AdshiftSDK.podspec'
+        
+        After publishing to CocoaPods trunk, this will work automatically.
+      -->
+    </iosPod>
+  </iosPods>
+
+</dependencies>
+
