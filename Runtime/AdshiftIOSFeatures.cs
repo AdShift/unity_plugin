@@ -142,8 +142,8 @@ namespace Adshift
         /// <summary>
         /// Gets the current App Tracking Transparency authorization status.
         /// </summary>
-        /// <returns>Authorization status string (authorized, denied, restricted, not_determined).</returns>
-        public string GetTrackingAuthorizationStatus()
+        /// <returns>Authorization status string (authorized, denied, restricted, not_determined), or null if unknown.</returns>
+        public string? GetTrackingAuthorizationStatus()
         {
             EnsureAvailable();
             return _platform.GetTrackingAuthorizationStatus();
@@ -155,9 +155,9 @@ namespace Adshift
         /// <returns>IDFA string, or null if not available (ATT denied, restricted, or not determined).</returns>
         /// <remarks>
         /// IDFA is only available when ATT status is "authorized".
-        /// Returns all zeros "00000000-0000-0000-0000-000000000000" if ATT is not granted.
+        /// Returns null if ATT permission is not granted or IDFA is unavailable.
         /// </remarks>
-        public string GetIDFA()
+        public string? GetIDFA()
         {
             EnsureAvailable();
             return _platform.GetIDFA();

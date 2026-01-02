@@ -192,15 +192,15 @@ namespace Adshift.Platform
             callback?.Invoke("authorized");
         }
 
-        public string GetTrackingAuthorizationStatus()
+        public string? GetTrackingAuthorizationStatus()
         {
             Debug.Log("[AdShift Editor] GetTrackingAuthorizationStatus");
             return "authorized";
         }
 
-        public string GetIDFA()
+        public string? GetIDFA()
         {
-            Debug.Log("[AdShift Editor] GetIDFA");
+            Debug.Log("[AdShift Editor] GetIDFA (simulated)");
             return "00000000-0000-0000-0000-000000000000";
         }
 

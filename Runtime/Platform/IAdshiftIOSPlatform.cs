@@ -49,14 +49,14 @@ namespace Adshift.Platform
         /// <summary>
         /// Gets the current ATT authorization status.
         /// </summary>
-        /// <returns>Status string (authorized, denied, restricted, not_determined).</returns>
-        string GetTrackingAuthorizationStatus();
+        /// <returns>Status string (authorized, denied, restricted, not_determined), or null if unknown.</returns>
+        string? GetTrackingAuthorizationStatus();
 
         /// <summary>
         /// Gets the IDFA if available.
         /// </summary>
         /// <returns>IDFA string or null if not available.</returns>
-        string GetIDFA();
+        string? GetIDFA();
 
         // ============ Deep Links ============
 

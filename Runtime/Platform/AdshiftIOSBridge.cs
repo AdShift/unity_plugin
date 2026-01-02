@@ -201,7 +201,7 @@ namespace Adshift.Platform
             _adshift_requestTrackingAuthorization(CALLBACK_OBJECT_NAME);
         }
 
-        public string GetTrackingAuthorizationStatus()
+        public string? GetTrackingAuthorizationStatus()
         {
             int status = _adshift_getTrackingAuthorizationStatus();
             return status switch
@@ -210,13 +210,14 @@ namespace Adshift.Platform
                 1 => "restricted",
                 2 => "denied",
                 3 => "authorized",
-                _ => "unknown"
+                _ => null
             };
         }
 
-        public string GetIDFA()
+        public string? GetIDFA()
         {
-            return _adshift_getIDFA();
+            string idfa = _adshift_getIDFA();
+            return string.IsNullOrEmpty(idfa) ? null : idfa;
         }
 
         // ============ Helpers ============

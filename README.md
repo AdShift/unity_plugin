@@ -220,11 +220,13 @@ AdshiftSDK.Instance.iOS?.RequestTrackingAuthorization(status =>
     Debug.Log($"ATT Status: {status}"); // authorized, denied, restricted, not_determined
 });
 
-// Check ATT status
-string status = AdshiftSDK.Instance.iOS?.GetTrackingAuthorizationStatus();
+// Check ATT status (returns null if unknown)
+string? status = AdshiftSDK.Instance.iOS?.GetTrackingAuthorizationStatus();
+if (status != null) Debug.Log($"ATT: {status}");
 
-// Get IDFA (if authorized)
-string idfa = AdshiftSDK.Instance.iOS?.GetIDFA();
+// Get IDFA (returns null if not available)
+string? idfa = AdshiftSDK.Instance.iOS?.GetIDFA();
+if (idfa != null) Debug.Log($"IDFA: {idfa}");
 
 // Handle deep link manually
 AdshiftSDK.Instance.iOS?.HandleDeepLink(url, deepLink =>

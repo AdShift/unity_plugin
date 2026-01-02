@@ -385,7 +385,7 @@ namespace Adshift.Demo
         {
 #if UNITY_IOS
             var status = AdshiftSDK.Instance.iOS?.GetTrackingAuthorizationStatus();
-            Log($"Current ATT Status: {status}");
+            Log($"Current ATT Status: {status ?? "unknown"}");
 #else
             Log("⚠️ ATT is iOS only");
 #endif
