@@ -420,6 +420,28 @@ namespace Adshift.Demo
 #endif
         }
         
+        private void TestDeepLink()
+        {
+            Log("🔗 Simulating deep link...");
+            
+            // Create a test deep link using factory method
+            var testParams = new Dictionary<string, object>
+            {
+                { "campaign", "unity_test" },
+                { "source", "demo" },
+                { "product_id", "12345" }
+            };
+            
+            var testDeepLink = AdshiftDeepLink.Found(
+                deepLinkUrl: "adshift://test/product?campaign=unity_test&source=demo&product_id=12345",
+                @params: testParams,
+                isDeferred: false
+            );
+            
+            // Manually invoke the callback to test the flow
+            OnDeepLinkReceived(testDeepLink);
+            Log("✅ Test deep link simulated!");
+        }
         
         private void ClearLogs()
         {
@@ -591,7 +613,8 @@ namespace Adshift.Demo
             }
             
             // === DEEP LINK STATUS ===
-            GUI.Label(new Rect(x, y, 200, 20), "🔗 Deep Link", smallHeaderStyle);
+            GUI.Label(new Rect(x, y, 100, 20), "🔗 Deep Link", smallHeaderStyle);
+            if (GUI.Button(new Rect(x + 110, y - 2, 80, 22), "Test Link", buttonStyle)) TestDeepLink();
             y += 20;
             GUI.Box(new Rect(x, y, scaledWidth - pad * 2, 45), "");
             GUI.Label(new Rect(x + 5, y + 3, scaledWidth - pad * 2 - 10, 40), deepLinkText, logStyle);
