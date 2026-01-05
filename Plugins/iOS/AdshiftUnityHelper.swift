@@ -176,6 +176,8 @@ import AdshiftSDK
                 result["status"] = "Found"
             case .notFound:
                 result["status"] = "NotFound"
+            @unknown default:
+                result["status"] = response.deeplink != nil ? "Found" : "NotFound"
             }
         } else {
             result["status"] = response.deeplink != nil ? "Found" : "NotFound"
