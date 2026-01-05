@@ -122,10 +122,25 @@ public class AdshiftUnityBridge {
 
     /**
      * Stops the SDK.
+     * Must be called on main thread due to lifecycle observer removal.
      */
     public static void stop() {
         try {
-            AdShiftLib.stop();
+            Activity activity = UnityPlayer.currentActivity;
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            AdShiftLib.stop();
+                        } catch (Exception e) {
+                            Log.e(TAG, "Stop failed: " + e.getMessage());
+                        }
+                    }
+                });
+            } else {
+                AdShiftLib.stop();
+            }
         } catch (Exception e) {
             Log.e(TAG, "Stop failed: " + e.getMessage());
         }
