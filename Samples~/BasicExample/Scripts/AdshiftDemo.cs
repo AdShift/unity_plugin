@@ -111,18 +111,10 @@ namespace Adshift.Demo
             {
                 sdkStarted = true;
                 Log($"✅ SDK Started Successfully!");
-                Log($"   Attribution ID: {result.AttributionId ?? "N/A"}");
-                if (result.Data != null)
-                {
-                    foreach (var kvp in result.Data)
-                    {
-                        Log($"   {kvp.Key}: {kvp.Value}");
-                    }
-                }
             }
             else
             {
-                Log($"❌ SDK Start Failed: {result.ErrorMessage}");
+                Log($"❌ SDK Start Failed: {result.ErrorMessage} (code: {result.ErrorCode})");
             }
         }
         
@@ -134,9 +126,9 @@ namespace Adshift.Demo
             deepLinkText = $"🔗 {linkType} Deep Link!\n";
             deepLinkText += $"URL: {deepLink.DeepLinkUrl ?? "N/A"}\n";
             
-            if (deepLink.Parameters != null)
+            if (deepLink.Params != null && deepLink.Params.Count > 0)
             {
-                foreach (var kvp in deepLink.Parameters)
+                foreach (var kvp in deepLink.Params)
                 {
                     deepLinkText += $"  {kvp.Key}: {kvp.Value}\n";
                 }
