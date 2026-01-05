@@ -23,6 +23,10 @@
     <!-- Install Referrer (transitive, but explicit for clarity) -->
     <androidPackage spec="com.android.installreferrer:installreferrer:2.2">
     </androidPackage>
+    
+    <!-- Google Play Services Ads Identifier (for GAID retrieval) -->
+    <androidPackage spec="com.google.android.gms:play-services-ads-identifier:18.0.1">
+    </androidPackage>
   </androidPackages>
 
   <!-- iOS Dependencies (CocoaPods) -->

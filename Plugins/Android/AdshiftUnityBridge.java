@@ -510,15 +510,15 @@ public class AdshiftUnityBridge {
         try {
             JSONObject json = new JSONObject();
             
-            // Deep link URL
-            if (result.getDeepLink() != null) {
-                json.put("deepLink", result.getDeepLink().toString());
+            // Deep link URL (property is 'uri' in Kotlin data class)
+            if (result.getUri() != null) {
+                json.put("deepLink", result.getUri().toString());
             } else {
                 json.put("deepLink", JSONObject.NULL);
             }
             
-            // Parameters
-            Map<String, ?> params = result.getParams();
+            // Parameters (property is 'queryParams' in Kotlin data class)
+            Map<String, ?> params = result.getQueryParams();
             if (params != null && !params.isEmpty()) {
                 json.put("params", new JSONObject(params));
             } else {
