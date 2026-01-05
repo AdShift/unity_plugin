@@ -1,6 +1,6 @@
 # AdShift Unity Plugin
 
-[![Unity](https://img.shields.io/badge/Unity-2022.3%2B-blue.svg)](https://unity.com/)
+[![Unity](https://img.shields.io/badge/Unity-6%2B-blue.svg)](https://unity.com/)
 [![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android-green.svg)](https://github.com/AdShift/unity_plugin)
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](LICENSE)
 
@@ -24,9 +24,19 @@ Official AdShift SDK plugin for Unity. Enable mobile attribution, in-app event t
 
 | Platform | Minimum Version |
 |----------|-----------------|
-| **Unity** | 2022.3 LTS+ |
-| **iOS** | 15.0+ |
+| **Unity** | **6 (2023.1)** or newer |
+| **iOS** | 15.0+, Xcode 15+ |
 | **Android** | API 21+ (Android 5.0) |
+
+### Build Tool Requirements
+
+| Tool | Minimum Version | Notes |
+|------|-----------------|-------|
+| **Android Gradle Plugin** | 8.6.0+ | Unity 6 default |
+| **Gradle** | 8.0+ | Unity 6 default |
+| **Xcode** | 15+ | For iOS builds |
+
+> ⚠️ **Note:** Unity 2022.3 LTS and earlier versions are **not supported** due to older Android Gradle Plugin (7.x) which is incompatible with modern AndroidX dependencies.
 
 ### Dependencies
 
@@ -279,5 +289,5 @@ The example includes UI buttons to test all SDK features.
 
 ## License
 
-Copyright © 2025 AdShift. All rights reserved.
+Copyright © 2026 AdShift. All rights reserved.
 See [LICENSE](LICENSE) for details.
