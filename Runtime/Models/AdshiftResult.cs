@@ -70,6 +70,15 @@ namespace Adshift.Models
         }
 
         /// <summary>
+        /// Creates a failure result with default error code.
+        /// </summary>
+        /// <param name="errorMessage">Human-readable error message.</param>
+        public static AdshiftResult Failure(string errorMessage)
+        {
+            return new AdshiftResult(false, -1, errorMessage);
+        }
+
+        /// <summary>
         /// Creates a failure result from an exception.
         /// </summary>
         /// <param name="exception">Exception that occurred.</param>
