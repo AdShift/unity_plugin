@@ -62,6 +62,9 @@ crashlytics-build.properties
 *.swp
 *.swo
 *~
+# BUT keep Unity Package Manager special folders (required for git archive)
+!Samples~/
+!Documentation~/
 
 # JetBrains Rider
 .idea/
