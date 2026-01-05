@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Adshift
+namespace Adshift.Models
 {
     /// <summary>
     /// Status of a deep link resolution.

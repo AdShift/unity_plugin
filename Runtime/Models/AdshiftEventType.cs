@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Adshift
+namespace Adshift.Models
 {
     /// <summary>
     /// Predefined event types for AdShift SDK.
