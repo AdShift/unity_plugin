@@ -13,12 +13,26 @@ namespace Adshift.Demo
     public class AdshiftDemo : MonoBehaviour
     {
         [Header("Configuration")]
-        [SerializeField] private string apiKey = "YOUR_API_KEY_HERE";
         [SerializeField] private bool isDebug = true;
         [SerializeField] private int appOpenDebounceMs = 5000;
         
         [Header("Android Settings")]
         [SerializeField] private bool collectOaid = false;
+        
+        // Platform-specific API keys - replace with your keys from AdShift Dashboard
+        private string ApiKey
+        {
+            get
+            {
+#if UNITY_IOS
+                return "YOUR_IOS_API_KEY";
+#elif UNITY_ANDROID
+                return "YOUR_ANDROID_API_KEY";
+#else
+                return "YOUR_API_KEY_HERE";
+#endif
+            }
+        }
         
         [Header("UI References (Optional - leave empty for runtime UI)")]
         [SerializeField] private Text logText;
@@ -87,7 +101,7 @@ namespace Adshift.Demo
             
             Log("AdShift Demo initialized");
             Log($"Platform: {Application.platform}");
-            Log($"API Key: {(string.IsNullOrEmpty(apiKey) ? "NOT SET" : apiKey.Substring(0, Mathf.Min(8, apiKey.Length)) + "...")}");
+            Log($"API Key: {(string.IsNullOrEmpty(ApiKey) ? "NOT SET" : ApiKey.Substring(0, Mathf.Min(8, ApiKey.Length)) + "...")}");
         }
         
         private void Start()
@@ -143,7 +157,7 @@ namespace Adshift.Demo
         
         private void InitializeSDK()
         {
-            if (string.IsNullOrEmpty(apiKey) || apiKey == "YOUR_API_KEY_HERE")
+            if (string.IsNullOrEmpty(ApiKey) || ApiKey == "YOUR_API_KEY_HERE")
             {
                 Log("⚠️ Please set your API Key first!");
                 return;
@@ -151,7 +165,7 @@ namespace Adshift.Demo
             
             Log("Initializing SDK...");
             
-            var config = new AdshiftConfig(apiKey)
+            var config = new AdshiftConfig(ApiKey)
             {
                 IsDebug = isDebug,
                 AppOpenDebounceMs = appOpenDebounceMs,
