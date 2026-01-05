@@ -4,6 +4,8 @@
 //
 //  Swift helper that bridges Objective-C++ to Swift SDK.
 //  Provides @objc compatible wrappers for Swift-only features.
+//  This class is compiled with the Unity project and acts as the bridge
+//  between Objective-C++ (AdshiftUnityBridge.mm) and Swift SDK (AdshiftSDK).
 //
 //  Copyright © 2024 AdShift. All rights reserved.
 //
@@ -11,17 +13,153 @@
 import Foundation
 import AdshiftSDK
 
+/// Callback type for deep link listener
+public typealias DeepLinkCallback = ([String: Any]) -> Void
+
 /// Unity helper class that provides @objc compatible methods for the Swift SDK.
-/// This is needed because Swift enums with associated values (like ASInAppEventType.customEvent)
-/// are not automatically exported to Objective-C.
+/// This is needed because:
+/// 1. Swift classes without @objc are not visible to Objective-C
+/// 2. Swift enums with associated values don't export to Objective-C
+/// 3. Swift async/await needs to be converted to callbacks for ObjC
 @available(iOS 15.0, *)
 @objc public class AdshiftUnityHelper: NSObject {
     
     /// Shared instance
     @objc public static let shared = AdshiftUnityHelper()
     
+    /// Stored deep link callback
+    private var deepLinkCallback: DeepLinkCallback?
+    
     private override init() {
         super.init()
+    }
+    
+    // MARK: - SDK Lifecycle
+    
+    /// Initializes the SDK with configuration
+    @objc public func initialize(
+        apiKey: String?,
+        isDebug: Bool,
+        appOpenDebounceMs: Int,
+        disableSKAN: Bool,
+        waitForATTBeforeStart: Bool,
+        attTimeoutMs: Int
+    ) {
+        Task { @MainActor in
+            if let apiKey = apiKey, !apiKey.isEmpty {
+                Adshift.shared.apiKey = apiKey
+            }
+            Adshift.shared.isDebug = isDebug
+            Adshift.shared.appOpenDebounceMs = appOpenDebounceMs
+            Adshift.shared.disableSKAN = disableSKAN
+            Adshift.shared.waitForATTBeforeStart = waitForATTBeforeStart
+            Adshift.shared.attTimeoutMs = attTimeoutMs
+        }
+    }
+    
+    /// Starts the SDK
+    @objc public func start(completion: (([String: Any]?, Error?) -> Void)?) {
+        Task { @MainActor in
+            await Adshift.shared.start(completionHandler: completion)
+        }
+    }
+    
+    /// Stops the SDK
+    @objc public func stop() {
+        Task { @MainActor in
+            Adshift.shared.stop()
+        }
+    }
+    
+    /// Checks if SDK is started
+    @objc public func isStarted() -> Bool {
+        // Note: This is called synchronously, but the actual check needs main thread
+        // For safety, we return a cached or default value
+        // The actual check happens async
+        var result = false
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        Task { @MainActor in
+            result = Adshift.shared.isStarted
+            semaphore.signal()
+        }
+        
+        // Wait with timeout to avoid deadlock
+        _ = semaphore.wait(timeout: .now() + 1.0)
+        return result
+    }
+    
+    // MARK: - Configuration
+    
+    /// Sets debug mode
+    @objc public func setDebugEnabled(_ enabled: Bool) {
+        Task { @MainActor in
+            Adshift.shared.isDebug = enabled
+        }
+    }
+    
+    /// Sets customer user ID
+    @objc public func setCustomerUserId(_ userId: String) {
+        Task { @MainActor in
+            Adshift.shared.setCustomerUserId(userId)
+        }
+    }
+    
+    /// Sets app open debounce interval
+    @objc public func setAppOpenDebounceMs(_ milliseconds: Int) {
+        Task { @MainActor in
+            Adshift.shared.appOpenDebounceMs = milliseconds
+        }
+    }
+    
+    /// Disables SKAdNetwork
+    @objc public func setDisableSKAN(_ disabled: Bool) {
+        Task { @MainActor in
+            Adshift.shared.disableSKAN = disabled
+        }
+    }
+    
+    /// Sets wait for ATT before start
+    @objc public func setWaitForATTBeforeStart(_ wait: Bool) {
+        Task { @MainActor in
+            Adshift.shared.waitForATTBeforeStart = wait
+        }
+    }
+    
+    /// Sets ATT timeout
+    @objc public func setAttTimeoutMs(_ milliseconds: Int) {
+        Task { @MainActor in
+            Adshift.shared.attTimeoutMs = milliseconds
+        }
+    }
+    
+    /// Enables/disables TCF data collection
+    @objc public func enableTCFDataCollection(_ enabled: Bool) {
+        Task { @MainActor in
+            Adshift.shared.enableTCFDataCollection(enabled)
+        }
+    }
+    
+    /// Refreshes consent state
+    @objc public func refreshConsent() {
+        Task { @MainActor in
+            Adshift.shared.refreshConsent()
+        }
+    }
+    
+    // MARK: - Deep Link Listener
+    
+    /// Registers deep link listener
+    @objc public func setDeepLinkListener(_ callback: @escaping ([String: Any]) -> Void) {
+        self.deepLinkCallback = callback
+        
+        Task { @MainActor in
+            Adshift.shared.onDeepLinkReceived { [weak self] response in
+                guard let self = self, let callback = self.deepLinkCallback else { return }
+                let serialized = self.serializeDeepLinkResponse(response)
+                callback(serialized)
+            }
+        }
     }
     
     // MARK: - Event Tracking
