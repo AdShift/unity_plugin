@@ -60,7 +60,8 @@ public typealias DeepLinkCallback = ([String: Any]) -> Void
     /// Starts the SDK
     @objc public func start(completion: (([String: Any]?, Error?) -> Void)?) {
         Task { @MainActor in
-            await Adshift.shared.start(completionHandler: completion)
+            // start(completionHandler:) is NOT async - it creates its own Task internally
+            Adshift.shared.start(completionHandler: completion)
         }
     }
     
@@ -80,7 +81,7 @@ public typealias DeepLinkCallback = ([String: Any]) -> Void
         let semaphore = DispatchSemaphore(value: 0)
         
         Task { @MainActor in
-            result = Adshift.shared.isStarted
+            result = Adshift.shared.isStarted()
             semaphore.signal()
         }
         
@@ -143,7 +144,8 @@ public typealias DeepLinkCallback = ([String: Any]) -> Void
     /// Refreshes consent state
     @objc public func refreshConsent() {
         Task { @MainActor in
-            Adshift.shared.refreshConsent()
+            // Returns ConsentSnapshot, but we don't need it for Unity
+            _ = Adshift.shared.refreshConsent()
         }
     }
     
