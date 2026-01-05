@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Adshift
+namespace Adshift.Models
 {
     /// <summary>
     /// Configuration for initializing the AdShift SDK.

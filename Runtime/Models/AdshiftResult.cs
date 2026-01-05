@@ -1,6 +1,6 @@
 using System;
 
-namespace Adshift
+namespace Adshift.Models
 {
     /// <summary>
     /// Result of an SDK operation (success or failure).

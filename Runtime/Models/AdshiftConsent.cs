@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Adshift
+namespace Adshift.Models
 {
     /// <summary>
     /// User consent data for GDPR/DMA compliance.
