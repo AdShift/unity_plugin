@@ -32,7 +32,7 @@
   <!-- iOS Dependencies (CocoaPods) -->
   <iosPods>
     <!-- AdShift iOS SDK - automatically fetched from CocoaPods trunk -->
-    <iosPod name="AdshiftSDK" version="1.0.0" minTargetSdk="15.0" />
+    <iosPod name="AdshiftSDK" version="1.0.1" minTargetSdk="15.0" />
   </iosPods>
 
 </dependencies>
