@@ -206,6 +206,22 @@ namespace Adshift.Platform
             }
         }
 
+        public void LogAdRevenue(string monetizationNetwork, string mediationNetwork, string currency, double revenue, Dictionary<string, object> additionalParameters, Action<AdshiftResult> callback)
+        {
+            AdshiftCallbackHandler.Instance.SetEventCallback(callback);
+
+            try
+            {
+                string additionalJson = additionalParameters != null ? DictionaryToJson(additionalParameters) : null;
+                GetBridge()?.CallStatic("logAdRevenue", monetizationNetwork, mediationNetwork, currency, revenue, additionalJson, CALLBACK_OBJECT_NAME);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[AdShift Android] LogAdRevenue failed: {e.Message}");
+                callback?.Invoke(AdshiftResult.Failure(e.Message));
+            }
+        }
+
         public void SetConsentData(AdshiftConsent consent)
         {
             try

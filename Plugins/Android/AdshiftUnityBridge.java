@@ -17,6 +17,8 @@ import android.util.Log;
 import com.adshift.sdk.core.AdShiftLib;
 import com.adshift.sdk.core.AdShiftConsent;
 import com.adshift.sdk.core.AdShiftRequestListener;
+import com.adshift.sdk.core.ASAdRevenueData;
+import com.adshift.sdk.core.ASMediationNetwork;
 import com.adshift.sdk.core.ConsentHint;
 import com.adshift.sdk.core.ConsentOptions;
 import com.adshift.sdk.core.deeplink.DeepLinkListener;
@@ -278,6 +280,58 @@ public class AdshiftUnityBridge {
             
         } catch (Exception e) {
             Log.e(TAG, "TrackPurchase failed: " + e.getMessage());
+            if (callbackObjectName != null && !callbackObjectName.isEmpty()) {
+                sendUnityMessage(callbackObjectName, ON_EVENT_CALLBACK, e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Logs an ad revenue event from impression-level revenue data.
+     */
+    public static void logAdRevenue(
+            String monetizationNetwork,
+            String mediationNetwork,
+            String currency,
+            double revenue,
+            String additionalParametersJson,
+            final String callbackObjectName) {
+        try {
+            ASMediationNetwork mediator = null;
+            for (ASMediationNetwork m : ASMediationNetwork.values()) {
+                if (m.getNetworkName().equals(mediationNetwork)) {
+                    mediator = m;
+                    break;
+                }
+            }
+            if (mediator == null) {
+                Log.e(TAG, "LogAdRevenue failed: unknown mediationNetwork " + mediationNetwork);
+                if (callbackObjectName != null && !callbackObjectName.isEmpty()) {
+                    sendUnityMessage(callbackObjectName, ON_EVENT_CALLBACK, "Unknown mediationNetwork: " + mediationNetwork);
+                }
+                return;
+            }
+
+            ASAdRevenueData data = new ASAdRevenueData(monetizationNetwork, mediator, currency, revenue);
+
+            Map<String, Object> additionalParams = null;
+            if (additionalParametersJson != null && !additionalParametersJson.isEmpty()) {
+                additionalParams = new HashMap<>();
+                JSONObject json = new JSONObject(additionalParametersJson);
+                Iterator<String> keys = json.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    additionalParams.put(key, json.get(key));
+                }
+            }
+
+            AdShiftLib.logAdRevenue(data, additionalParams);
+
+            if (callbackObjectName != null && !callbackObjectName.isEmpty()) {
+                sendUnityMessage(callbackObjectName, ON_EVENT_CALLBACK, "success");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "LogAdRevenue failed: " + e.getMessage());
             if (callbackObjectName != null && !callbackObjectName.isEmpty()) {
                 sendUnityMessage(callbackObjectName, ON_EVENT_CALLBACK, e.getMessage());
             }

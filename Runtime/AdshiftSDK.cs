@@ -361,6 +361,48 @@ namespace Adshift
             Instance._platform.TrackPurchase(productId, revenue, currency, transactionId, callback);
         }
 
+        /// <summary>
+        /// Logs an ad revenue event from impression-level revenue data (ILRD).
+        /// </summary>
+        /// <param name="monetizationNetwork">Who served the ad (e.g., "facebook", "unity_ads").</param>
+        /// <param name="mediationNetwork">Mediator SDK identifier (e.g., "applovin_max", "google_admob").</param>
+        /// <param name="currency">ISO 4217 currency code (e.g., "USD").</param>
+        /// <param name="revenue">Impression revenue amount.</param>
+        /// <param name="additionalParameters">Optional extra parameters.</param>
+        /// <param name="callback">Optional callback invoked when tracking completes.</param>
+        /// <exception cref="InvalidOperationException">Thrown if SDK not initialized.</exception>
+        /// <example>
+        /// <code>
+        /// AdshiftSDK.LogAdRevenue(
+        ///     monetizationNetwork: "facebook",
+        ///     mediationNetwork: "applovin_max",
+        ///     currency: "USD",
+        ///     revenue: 0.0023
+        /// );
+        /// </code>
+        /// </example>
+        public static void LogAdRevenue(
+            string monetizationNetwork,
+            string mediationNetwork,
+            string currency,
+            double revenue,
+            Dictionary<string, object> additionalParameters = null,
+            Action<AdshiftResult> callback = null)
+        {
+            Instance.EnsureInitialized();
+
+            if (string.IsNullOrEmpty(monetizationNetwork))
+                throw new ArgumentNullException(nameof(monetizationNetwork));
+            if (string.IsNullOrEmpty(mediationNetwork))
+                throw new ArgumentNullException(nameof(mediationNetwork));
+            if (string.IsNullOrEmpty(currency) || currency.Length != 3)
+                throw new ArgumentException("Currency must be a 3-character ISO 4217 code", nameof(currency));
+            if (double.IsNaN(revenue) || revenue <= 0)
+                throw new ArgumentException("Revenue must be a positive number", nameof(revenue));
+
+            Instance._platform.LogAdRevenue(monetizationNetwork, mediationNetwork, currency, revenue, additionalParameters, callback);
+        }
+
         #endregion
 
         #region Static Consent Methods

@@ -183,6 +183,39 @@ public typealias DeepLinkCallback = ([String: Any]) -> Void
         }
     }
     
+    /// Logs an ad revenue event (Unity-compatible)
+    @objc public func logAdRevenue(
+        monetizationNetwork: String,
+        mediationNetwork: String,
+        currency: String,
+        revenue: Double,
+        additionalParameters: NSDictionary?,
+        completion: ((Error?) -> Void)?
+    ) {
+        guard let mediator = ASMediationNetwork(rawValue: mediationNetwork) else {
+            completion?(NSError(
+                domain: "AdShiftSDK",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Unknown mediationNetwork: \(mediationNetwork)"]
+            ))
+            return
+        }
+
+        let adRevenueData = ASAdRevenueData(
+            monetizationNetwork: monetizationNetwork,
+            mediationNetwork: mediator,
+            currencyIso4217Code: currency,
+            revenue: revenue
+        )
+
+        let additional = additionalParameters as? [String: Any]
+
+        Task { @MainActor in
+            await Adshift.shared.logAdRevenue(adRevenueData, additionalParameters: additional)
+            completion?(nil)
+        }
+    }
+
     /// Tracks a purchase event (Unity-compatible)
     @objc public func trackPurchase(
         productId: String,

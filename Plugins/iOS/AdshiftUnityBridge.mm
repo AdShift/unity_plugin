@@ -247,6 +247,36 @@ void _adshift_trackPurchase(const char* productId, double revenue, const char* c
     }];
 }
 
+/// Logs an ad revenue event from impression-level revenue data
+void _adshift_logAdRevenue(const char* monetizationNetwork, const char* mediationNetwork, const char* currency, double revenue, const char* additionalParametersJson, const char* callbackObjectName) {
+    NSString* monetizationStr = stringFromChar(monetizationNetwork);
+    NSString* mediationStr = stringFromChar(mediationNetwork);
+    NSString* currencyStr = stringFromChar(currency);
+    NSString* callbackObject = stringFromChar(callbackObjectName);
+    
+    if (monetizationStr == nil || mediationStr == nil || currencyStr == nil) {
+        NSLog(@"[AdShift Unity] LogAdRevenue failed - missing required parameters");
+        return;
+    }
+    
+    NSDictionary* additionalParams = additionalParametersJson ? dictionaryFromJson(additionalParametersJson) : nil;
+    
+    [[AdshiftUnityHelper shared] logAdRevenueWithMonetizationNetwork:monetizationStr
+                                                  mediationNetwork:mediationStr
+                                                          currency:currencyStr
+                                                           revenue:revenue
+                                              additionalParameters:additionalParams
+                                                        completion:^(NSError* _Nullable error) {
+        if (callbackObject != nil && callbackObject.length > 0) {
+            if (error != nil) {
+                unityCallback(callbackObject, "OnEventCallback", [error.localizedDescription UTF8String]);
+            } else {
+                unityCallback(callbackObject, "OnEventCallback", "success");
+            }
+        }
+    }];
+}
+
 #pragma mark - Consent (GDPR/DMA)
 
 /// Sets consent data from JSON
