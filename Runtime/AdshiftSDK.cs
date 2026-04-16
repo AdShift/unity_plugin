@@ -399,6 +399,8 @@ namespace Adshift
                 throw new ArgumentException("Currency must be a 3-character ISO 4217 code", nameof(currency));
             if (double.IsNaN(revenue) || revenue <= 0)
                 throw new ArgumentException("Revenue must be a positive number", nameof(revenue));
+            if (revenue > 10.0)
+                throw new ArgumentException("Revenue exceeds maximum allowed value per impression", nameof(revenue));
 
             Instance._platform.LogAdRevenue(monetizationNetwork, mediationNetwork, currency, revenue, additionalParameters, callback);
         }
