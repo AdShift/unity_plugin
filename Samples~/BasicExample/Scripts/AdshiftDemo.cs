@@ -188,6 +188,14 @@ namespace Adshift.Demo
                 return;
             }
             
+            // Branded RightLink hostnames example. Uncomment and replace the
+            // host to also accept your own customer-facing hostname (e.g.
+            // link.your-domain.com). You MUST also declare the same host in
+            // your platform manifests (Android intent-filter and iOS
+            // Associated Domains entitlement) — without that the OS never
+            // delivers the deep link to the SDK in the first place.
+            // AdshiftSDK.SetBrandedDomains(new[] { "link.your-domain.com" });
+
             Log("Starting SDK...");
             AdshiftSDK.Start(OnStartCallback);
         }

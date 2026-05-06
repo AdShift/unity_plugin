@@ -106,6 +106,13 @@ public typealias DeepLinkCallback = ([String: Any]) -> Void
         }
     }
     
+    /// Sets branded RightLink domains (custom CNAMEs treated as attribution sources).
+    @objc public func setBrandedDomains(_ domains: [String]) {
+        Task { @MainActor in
+            Adshift.shared.brandedDomains = domains
+        }
+    }
+    
     /// Sets app open debounce interval
     @objc public func setAppOpenDebounceMs(_ milliseconds: Int) {
         Task { @MainActor in

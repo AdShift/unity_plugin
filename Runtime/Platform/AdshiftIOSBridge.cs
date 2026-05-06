@@ -43,6 +43,9 @@ namespace Adshift.Platform
         private static extern void _adshift_setCustomerUserId(string userId);
 
         [DllImport("__Internal")]
+        private static extern void _adshift_setBrandedDomains(string domainsJson);
+
+        [DllImport("__Internal")]
         private static extern void _adshift_setAppOpenDebounceMs(int milliseconds);
 
         [DllImport("__Internal")]
@@ -130,6 +133,12 @@ namespace Adshift.Platform
         public void SetCustomerUserId(string userId)
         {
             _adshift_setCustomerUserId(userId ?? "");
+        }
+
+        public void SetBrandedDomains(string[] domains)
+        {
+            string json = StringArrayToJson(domains);
+            _adshift_setBrandedDomains(json);
         }
 
         public void SetAppOpenDebounceMs(int milliseconds)
@@ -259,6 +268,19 @@ namespace Adshift.Platform
         private static string EscapeJson(string s)
         {
             return s.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r");
+        }
+
+        private static string StringArrayToJson(string[] values)
+        {
+            if (values == null || values.Length == 0) return "[]";
+
+            var parts = new List<string>(values.Length);
+            foreach (var v in values)
+            {
+                if (v == null) continue;
+                parts.Add($"\"{EscapeJson(v)}\"");
+            }
+            return "[" + string.Join(",", parts) + "]";
         }
     }
 }

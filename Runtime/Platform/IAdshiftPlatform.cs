@@ -59,6 +59,14 @@ namespace Adshift.Platform
         void SetCustomerUserId(string userId);
 
         /// <summary>
+        /// Configures the list of branded RightLink hostnames the SDK should
+        /// treat as attribution sources, in addition to the default
+        /// <c>*.rightlink.me</c>. Call BEFORE <see cref="Start"/>.
+        /// </summary>
+        /// <param name="domains">Branded hostnames (e.g. <c>"link.your-domain.com"</c>).</param>
+        void SetBrandedDomains(string[] domains);
+
+        /// <summary>
         /// Sets the debounce interval for automatic APP_OPEN events.
         /// </summary>
         /// <param name="milliseconds">Minimum time between APP_OPEN events in ms.</param>

@@ -257,6 +257,39 @@ namespace Adshift
         }
 
         /// <summary>
+        /// Configures the list of branded RightLink hostnames the SDK should
+        /// treat as attribution sources, in addition to the default
+        /// <c>*.rightlink.me</c>.
+        /// </summary>
+        /// <remarks>
+        /// Required when your campaigns use a custom CNAME (e.g.
+        /// <c>"link.your-domain.com"</c>). You also need to declare the same
+        /// hostname in your Android <c>AndroidManifest.xml</c> intent-filter
+        /// and in the iOS Associated Domains entitlement — without that the
+        /// OS will never deliver the deep link to the SDK.
+        /// 
+        /// Call this BEFORE <see cref="Start"/> so the very first click on a
+        /// branded link is attributed. There is no dynamic refresh — the list
+        /// passed here must contain every host the app should treat as
+        /// RightLink at the moment of the first click. Hostnames are
+        /// normalised internally (lowercased, trailing dot stripped).
+        /// </remarks>
+        /// <param name="domains">Branded hostnames. May be empty to clear.</param>
+        /// <exception cref="InvalidOperationException">Thrown if SDK not initialized.</exception>
+        /// <example>
+        /// <code>
+        /// AdshiftSDK.Initialize(config);
+        /// AdshiftSDK.SetBrandedDomains(new[] { "link.your-domain.com" });
+        /// AdshiftSDK.Start();
+        /// </code>
+        /// </example>
+        public static void SetBrandedDomains(string[] domains)
+        {
+            Instance.EnsureInitialized();
+            Instance._platform.SetBrandedDomains(domains ?? Array.Empty<string>());
+        }
+
+        /// <summary>
         /// Sets the minimum interval between automatic APP_OPEN events.
         /// </summary>
         /// <param name="milliseconds">Debounce interval in milliseconds. Default: 10000 (10s).</param>

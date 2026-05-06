@@ -24,11 +24,14 @@ import com.adshift.sdk.core.deeplink.DeepLinkResult;
 import com.adshift.sdk.core.deeplink.DeepLinkStatus;
 import com.unity3d.player.UnityPlayer;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -187,6 +190,32 @@ public class AdshiftUnityBridge {
             AdShiftLib.setCustomerUserId(userId != null ? userId : "");
         } catch (Exception e) {
             Log.e(TAG, "SetCustomerUserId failed: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sets the branded RightLink hostnames the SDK should treat as
+     * attribution sources, in addition to the default *.rightlink.me.
+     *
+     * @param domainsJson JSON array of hostnames, e.g. ["link.your-domain.com"]
+     */
+    public static void setBrandedDomains(String domainsJson) {
+        try {
+            List<String> domains = new ArrayList<>();
+            if (domainsJson != null && !domainsJson.isEmpty() && !domainsJson.equals("[]")) {
+                JSONArray arr = new JSONArray(domainsJson);
+                for (int i = 0; i < arr.length(); i++) {
+                    String host = arr.optString(i, null);
+                    if (host != null && !host.isEmpty()) {
+                        domains.add(host);
+                    }
+                }
+            }
+            AdShiftLib.setBrandedDomains(domains);
+        } catch (JSONException e) {
+            Log.e(TAG, "SetBrandedDomains failed: invalid JSON - " + e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, "SetBrandedDomains failed: " + e.getMessage());
         }
     }
 
