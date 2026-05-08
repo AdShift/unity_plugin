@@ -122,6 +122,12 @@ namespace Adshift.Platform
             Debug.Log($"[AdShift Editor] SetCustomerUserId: {userId}");
         }
 
+        public void SetBrandedDomains(string[] domains)
+        {
+            var domainsStr = domains != null && domains.Length > 0 ? string.Join(", ", domains) : "(empty)";
+            Debug.Log($"[AdShift Editor] SetBrandedDomains: {domainsStr}");
+        }
+
         public void SetAppOpenDebounceMs(int milliseconds)
         {
             Debug.Log($"[AdShift Editor] SetAppOpenDebounceMs: {milliseconds}");

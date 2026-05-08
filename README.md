@@ -154,6 +154,37 @@ AdshiftSDK.SetCustomerUserId("user_12345");
 AdshiftSDK.SetAppOpenDebounceMs(30000);
 ```
 
+### Branded Domains (custom RightLink hostnames)
+
+If your campaigns use a custom domain (e.g. `link.your-domain.com`) instead of
+the default `*.rightlink.me`, you must configure the SDK so it recognises the
+branded host as an attribution source. Three things are required:
+
+1. **DNS + SSL** — set a `CNAME` from your branded host to `rightlink.me` and
+   confirm the certificate goes green in the AdShift panel.
+2. **Native manifests** — declare the same hostname in:
+   - Android: `AndroidManifest.xml` intent-filter (App Links). In Unity this
+     goes into `Assets/Plugins/Android/AndroidManifest.xml`.
+   - iOS: Associated Domains entitlement (`applinks:link.your-domain.com`).
+     In Unity, configure via `XcodeProjectSettings` post-processor or edit
+     entitlements after build.
+   Without this the OS will never deliver the deep link to the SDK in the
+   first place — no SDK config can work around it.
+3. **SDK call** — register the host with the SDK BEFORE `Start()` so the very
+   first click is attributed:
+
+```csharp
+AdshiftSDK.Initialize(config);
+AdshiftSDK.SetBrandedDomains(new[] { "link.your-domain.com" });
+AdshiftSDK.Start();
+```
+
+The array passed to `SetBrandedDomains` must contain every branded host the
+app should treat as RightLink at the time of the first click — there is no
+dynamic refresh. Hostnames are normalised internally (lowercased, trailing
+dot stripped). Calling without this method (or with an empty array)
+preserves legacy behaviour where only `*.rightlink.me` triggers attribution.
+
 ### Event Tracking
 
 ```csharp

@@ -163,6 +163,19 @@ namespace Adshift.Platform
             }
         }
 
+        public void SetBrandedDomains(string[] domains)
+        {
+            try
+            {
+                string json = StringArrayToJson(domains);
+                GetBridge()?.CallStatic("setBrandedDomains", json);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[AdShift Android] SetBrandedDomains failed: {e.Message}");
+            }
+        }
+
         public void SetAppOpenDebounceMs(int milliseconds)
         {
             try
@@ -355,6 +368,19 @@ namespace Adshift.Platform
         private static string EscapeJson(string s)
         {
             return s.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r");
+        }
+
+        private static string StringArrayToJson(string[] values)
+        {
+            if (values == null || values.Length == 0) return "[]";
+
+            var parts = new List<string>(values.Length);
+            foreach (var v in values)
+            {
+                if (v == null) continue;
+                parts.Add($"\"{EscapeJson(v)}\"");
+            }
+            return "[" + string.Join(",", parts) + "]";
         }
     }
 }

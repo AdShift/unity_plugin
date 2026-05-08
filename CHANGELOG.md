@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- `AdshiftSDK.SetBrandedDomains(string[])` — register branded RightLink
+  hostnames (e.g. `link.your-domain.com`) so the SDK treats them as
+  attribution sources alongside the default `*.rightlink.me`. Must be called
+  before `Start()`. Requires also declaring the host in `AndroidManifest.xml`
+  intent-filter and the iOS Associated Domains entitlement.
+
 ## [1.0.0] - 2025-01-01
 
 ### Added
