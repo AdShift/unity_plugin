@@ -146,6 +146,12 @@ namespace Adshift.Platform
             callback?.Invoke(AdshiftResult.Success());
         }
 
+        public void LogAdRevenue(string monetizationNetwork, string mediationNetwork, string currency, double revenue, Dictionary<string, object> additionalParameters, Action<AdshiftResult> callback)
+        {
+            Debug.Log($"[AdShift Editor] LogAdRevenue: network={monetizationNetwork}, mediator={mediationNetwork}, revenue={revenue}, currency={currency}");
+            callback?.Invoke(AdshiftResult.Success());
+        }
+
         public void SetConsentData(AdshiftConsent consent)
         {
             Debug.Log($"[AdShift Editor] SetConsentData: {consent}");

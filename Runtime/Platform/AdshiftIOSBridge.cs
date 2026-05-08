@@ -55,6 +55,9 @@ namespace Adshift.Platform
         private static extern void _adshift_trackPurchase(string productId, double revenue, string currency, string transactionId, string callbackObjectName);
 
         [DllImport("__Internal")]
+        private static extern void _adshift_logAdRevenue(string monetizationNetwork, string mediationNetwork, string currency, double revenue, string additionalParametersJson, string callbackObjectName);
+
+        [DllImport("__Internal")]
         private static extern void _adshift_setConsentData(string consentJson);
 
         [DllImport("__Internal")]
@@ -157,6 +160,13 @@ namespace Adshift.Platform
         {
             AdshiftCallbackHandler.Instance.SetEventCallback(callback);
             _adshift_trackPurchase(productId, revenue, currency, transactionId, CALLBACK_OBJECT_NAME);
+        }
+
+        public void LogAdRevenue(string monetizationNetwork, string mediationNetwork, string currency, double revenue, Dictionary<string, object> additionalParameters, Action<AdshiftResult> callback)
+        {
+            AdshiftCallbackHandler.Instance.SetEventCallback(callback);
+            string additionalJson = additionalParameters != null ? DictionaryToJson(additionalParameters) : null;
+            _adshift_logAdRevenue(monetizationNetwork, mediationNetwork, currency, revenue, additionalJson, CALLBACK_OBJECT_NAME);
         }
 
         public void SetConsentData(AdshiftConsent consent)
