@@ -14,7 +14,7 @@
   <!-- Android Dependencies (Maven Central) -->
   <androidPackages>
     <!-- AdShift Android SDK -->
-    <androidPackage spec="com.adshift:android-sdk:2.0.3">
+    <androidPackage spec="com.adshift:android-sdk:2.1.0">
       <repositories>
         <repository>https://repo1.maven.org/maven2</repository>
       </repositories>
@@ -32,7 +32,7 @@
   <!-- iOS Dependencies (CocoaPods) -->
   <iosPods>
     <!-- AdShift iOS SDK - automatically fetched from CocoaPods trunk -->
-    <iosPod name="AdshiftSDK" version="1.0.1" minTargetSdk="15.0" />
+    <iosPod name="AdshiftSDK" version="1.5.0" minTargetSdk="15.0" />
   </iosPods>
 
 </dependencies>
