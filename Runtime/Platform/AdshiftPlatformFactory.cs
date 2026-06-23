@@ -122,6 +122,12 @@ namespace Adshift.Platform
             Debug.Log($"[AdShift Editor] SetCustomerUserId: {userId}");
         }
 
+        public void SetBrandedDomains(string[] domains)
+        {
+            var domainsStr = domains != null && domains.Length > 0 ? string.Join(", ", domains) : "(empty)";
+            Debug.Log($"[AdShift Editor] SetBrandedDomains: {domainsStr}");
+        }
+
         public void SetAppOpenDebounceMs(int milliseconds)
         {
             Debug.Log($"[AdShift Editor] SetAppOpenDebounceMs: {milliseconds}");
@@ -137,6 +143,12 @@ namespace Adshift.Platform
         public void TrackPurchase(string productId, double revenue, string currency, string transactionId, Action<AdshiftResult> callback)
         {
             Debug.Log($"[AdShift Editor] TrackPurchase: productId={productId}, revenue={revenue}, currency={currency}");
+            callback?.Invoke(AdshiftResult.Success());
+        }
+
+        public void LogAdRevenue(string monetizationNetwork, string mediationNetwork, string currency, double revenue, Dictionary<string, object> additionalParameters, Action<AdshiftResult> callback)
+        {
+            Debug.Log($"[AdShift Editor] LogAdRevenue: network={monetizationNetwork}, mediator={mediationNetwork}, revenue={revenue}, currency={currency}");
             callback?.Invoke(AdshiftResult.Success());
         }
 

@@ -17,6 +17,8 @@ import android.util.Log;
 import com.adshift.sdk.core.AdShiftLib;
 import com.adshift.sdk.core.AdShiftConsent;
 import com.adshift.sdk.core.AdShiftRequestListener;
+import com.adshift.sdk.core.ASAdRevenueData;
+import com.adshift.sdk.core.ASMediationNetwork;
 import com.adshift.sdk.core.ConsentHint;
 import com.adshift.sdk.core.ConsentOptions;
 import com.adshift.sdk.core.deeplink.DeepLinkListener;
@@ -24,11 +26,14 @@ import com.adshift.sdk.core.deeplink.DeepLinkResult;
 import com.adshift.sdk.core.deeplink.DeepLinkStatus;
 import com.unity3d.player.UnityPlayer;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -191,6 +196,32 @@ public class AdshiftUnityBridge {
     }
 
     /**
+     * Sets the branded RightLink hostnames the SDK should treat as
+     * attribution sources, in addition to the default *.rightlink.me.
+     *
+     * @param domainsJson JSON array of hostnames, e.g. ["link.your-domain.com"]
+     */
+    public static void setBrandedDomains(String domainsJson) {
+        try {
+            List<String> domains = new ArrayList<>();
+            if (domainsJson != null && !domainsJson.isEmpty() && !domainsJson.equals("[]")) {
+                JSONArray arr = new JSONArray(domainsJson);
+                for (int i = 0; i < arr.length(); i++) {
+                    String host = arr.optString(i, null);
+                    if (host != null && !host.isEmpty()) {
+                        domains.add(host);
+                    }
+                }
+            }
+            AdShiftLib.setBrandedDomains(domains);
+        } catch (JSONException e) {
+            Log.e(TAG, "SetBrandedDomains failed: invalid JSON - " + e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, "SetBrandedDomains failed: " + e.getMessage());
+        }
+    }
+
+    /**
      * Sets app open debounce interval.
      * 
      * @param milliseconds Debounce time in ms
@@ -278,6 +309,58 @@ public class AdshiftUnityBridge {
             
         } catch (Exception e) {
             Log.e(TAG, "TrackPurchase failed: " + e.getMessage());
+            if (callbackObjectName != null && !callbackObjectName.isEmpty()) {
+                sendUnityMessage(callbackObjectName, ON_EVENT_CALLBACK, e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Logs an ad revenue event from impression-level revenue data.
+     */
+    public static void logAdRevenue(
+            String monetizationNetwork,
+            String mediationNetwork,
+            String currency,
+            double revenue,
+            String additionalParametersJson,
+            final String callbackObjectName) {
+        try {
+            ASMediationNetwork mediator = null;
+            for (ASMediationNetwork m : ASMediationNetwork.values()) {
+                if (m.getNetworkName().equals(mediationNetwork)) {
+                    mediator = m;
+                    break;
+                }
+            }
+            if (mediator == null) {
+                Log.e(TAG, "LogAdRevenue failed: unknown mediationNetwork " + mediationNetwork);
+                if (callbackObjectName != null && !callbackObjectName.isEmpty()) {
+                    sendUnityMessage(callbackObjectName, ON_EVENT_CALLBACK, "Unknown mediationNetwork: " + mediationNetwork);
+                }
+                return;
+            }
+
+            ASAdRevenueData data = new ASAdRevenueData(monetizationNetwork, mediator, currency, revenue);
+
+            Map<String, Object> additionalParams = null;
+            if (additionalParametersJson != null && !additionalParametersJson.isEmpty()) {
+                additionalParams = new HashMap<>();
+                JSONObject json = new JSONObject(additionalParametersJson);
+                Iterator<String> keys = json.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    additionalParams.put(key, json.get(key));
+                }
+            }
+
+            AdShiftLib.logAdRevenue(data, additionalParams);
+
+            if (callbackObjectName != null && !callbackObjectName.isEmpty()) {
+                sendUnityMessage(callbackObjectName, ON_EVENT_CALLBACK, "success");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "LogAdRevenue failed: " + e.getMessage());
             if (callbackObjectName != null && !callbackObjectName.isEmpty()) {
                 sendUnityMessage(callbackObjectName, ON_EVENT_CALLBACK, e.getMessage());
             }

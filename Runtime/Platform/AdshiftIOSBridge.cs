@@ -43,6 +43,9 @@ namespace Adshift.Platform
         private static extern void _adshift_setCustomerUserId(string userId);
 
         [DllImport("__Internal")]
+        private static extern void _adshift_setBrandedDomains(string domainsJson);
+
+        [DllImport("__Internal")]
         private static extern void _adshift_setAppOpenDebounceMs(int milliseconds);
 
         [DllImport("__Internal")]
@@ -50,6 +53,9 @@ namespace Adshift.Platform
 
         [DllImport("__Internal")]
         private static extern void _adshift_trackPurchase(string productId, double revenue, string currency, string transactionId, string callbackObjectName);
+
+        [DllImport("__Internal")]
+        private static extern void _adshift_logAdRevenue(string monetizationNetwork, string mediationNetwork, string currency, double revenue, string additionalParametersJson, string callbackObjectName);
 
         [DllImport("__Internal")]
         private static extern void _adshift_setConsentData(string consentJson);
@@ -132,6 +138,12 @@ namespace Adshift.Platform
             _adshift_setCustomerUserId(userId ?? "");
         }
 
+        public void SetBrandedDomains(string[] domains)
+        {
+            string json = StringArrayToJson(domains);
+            _adshift_setBrandedDomains(json);
+        }
+
         public void SetAppOpenDebounceMs(int milliseconds)
         {
             _adshift_setAppOpenDebounceMs(milliseconds);
@@ -148,6 +160,13 @@ namespace Adshift.Platform
         {
             AdshiftCallbackHandler.Instance.SetEventCallback(callback);
             _adshift_trackPurchase(productId, revenue, currency, transactionId, CALLBACK_OBJECT_NAME);
+        }
+
+        public void LogAdRevenue(string monetizationNetwork, string mediationNetwork, string currency, double revenue, Dictionary<string, object> additionalParameters, Action<AdshiftResult> callback)
+        {
+            AdshiftCallbackHandler.Instance.SetEventCallback(callback);
+            string additionalJson = additionalParameters != null ? DictionaryToJson(additionalParameters) : null;
+            _adshift_logAdRevenue(monetizationNetwork, mediationNetwork, currency, revenue, additionalJson, CALLBACK_OBJECT_NAME);
         }
 
         public void SetConsentData(AdshiftConsent consent)
@@ -259,6 +278,19 @@ namespace Adshift.Platform
         private static string EscapeJson(string s)
         {
             return s.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r");
+        }
+
+        private static string StringArrayToJson(string[] values)
+        {
+            if (values == null || values.Length == 0) return "[]";
+
+            var parts = new List<string>(values.Length);
+            foreach (var v in values)
+            {
+                if (v == null) continue;
+                parts.Add($"\"{EscapeJson(v)}\"");
+            }
+            return "[" + string.Join(",", parts) + "]";
         }
     }
 }

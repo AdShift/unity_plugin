@@ -1,6 +1,6 @@
 {
   "name": "com.adshift.sdk",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "displayName": "AdShift SDK",
   "description": "Mobile Attribution SDK for Unity - Install tracking, event analytics, SKAdNetwork 4.0+, deep linking, and GDPR/TCF 2.2 compliance.",
   "unity": "2023.1",

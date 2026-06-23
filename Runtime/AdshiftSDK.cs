@@ -257,6 +257,39 @@ namespace Adshift
         }
 
         /// <summary>
+        /// Configures the list of branded RightLink hostnames the SDK should
+        /// treat as attribution sources, in addition to the default
+        /// <c>*.rightlink.me</c>.
+        /// </summary>
+        /// <remarks>
+        /// Required when your campaigns use a custom CNAME (e.g.
+        /// <c>"link.your-domain.com"</c>). You also need to declare the same
+        /// hostname in your Android <c>AndroidManifest.xml</c> intent-filter
+        /// and in the iOS Associated Domains entitlement — without that the
+        /// OS will never deliver the deep link to the SDK.
+        /// 
+        /// Call this BEFORE <see cref="Start"/> so the very first click on a
+        /// branded link is attributed. There is no dynamic refresh — the list
+        /// passed here must contain every host the app should treat as
+        /// RightLink at the moment of the first click. Hostnames are
+        /// normalised internally (lowercased, trailing dot stripped).
+        /// </remarks>
+        /// <param name="domains">Branded hostnames. May be empty to clear.</param>
+        /// <exception cref="InvalidOperationException">Thrown if SDK not initialized.</exception>
+        /// <example>
+        /// <code>
+        /// AdshiftSDK.Initialize(config);
+        /// AdshiftSDK.SetBrandedDomains(new[] { "link.your-domain.com" });
+        /// AdshiftSDK.Start();
+        /// </code>
+        /// </example>
+        public static void SetBrandedDomains(string[] domains)
+        {
+            Instance.EnsureInitialized();
+            Instance._platform.SetBrandedDomains(domains ?? Array.Empty<string>());
+        }
+
+        /// <summary>
         /// Sets the minimum interval between automatic APP_OPEN events.
         /// </summary>
         /// <param name="milliseconds">Debounce interval in milliseconds. Default: 10000 (10s).</param>
@@ -359,6 +392,50 @@ namespace Adshift
                 throw new ArgumentException("Revenue cannot be negative", nameof(revenue));
 
             Instance._platform.TrackPurchase(productId, revenue, currency, transactionId, callback);
+        }
+
+        /// <summary>
+        /// Logs an ad revenue event from impression-level revenue data (ILRD).
+        /// </summary>
+        /// <param name="monetizationNetwork">Who served the ad (e.g., "facebook", "unity_ads").</param>
+        /// <param name="mediationNetwork">Mediator SDK identifier (e.g., "applovin_max", "google_admob").</param>
+        /// <param name="currency">ISO 4217 currency code (e.g., "USD").</param>
+        /// <param name="revenue">Impression revenue amount.</param>
+        /// <param name="additionalParameters">Optional extra parameters.</param>
+        /// <param name="callback">Optional callback invoked when tracking completes.</param>
+        /// <exception cref="InvalidOperationException">Thrown if SDK not initialized.</exception>
+        /// <example>
+        /// <code>
+        /// AdshiftSDK.LogAdRevenue(
+        ///     monetizationNetwork: "facebook",
+        ///     mediationNetwork: "applovin_max",
+        ///     currency: "USD",
+        ///     revenue: 0.0023
+        /// );
+        /// </code>
+        /// </example>
+        public static void LogAdRevenue(
+            string monetizationNetwork,
+            string mediationNetwork,
+            string currency,
+            double revenue,
+            Dictionary<string, object> additionalParameters = null,
+            Action<AdshiftResult> callback = null)
+        {
+            Instance.EnsureInitialized();
+
+            if (string.IsNullOrEmpty(monetizationNetwork))
+                throw new ArgumentNullException(nameof(monetizationNetwork));
+            if (string.IsNullOrEmpty(mediationNetwork))
+                throw new ArgumentNullException(nameof(mediationNetwork));
+            if (string.IsNullOrEmpty(currency) || currency.Length != 3)
+                throw new ArgumentException("Currency must be a 3-character ISO 4217 code", nameof(currency));
+            if (double.IsNaN(revenue) || revenue <= 0)
+                throw new ArgumentException("Revenue must be a positive number", nameof(revenue));
+            if (revenue > 10.0)
+                throw new ArgumentException("Revenue exceeds maximum allowed value per impression", nameof(revenue));
+
+            Instance._platform.LogAdRevenue(monetizationNetwork, mediationNetwork, currency, revenue, additionalParameters, callback);
         }
 
         #endregion

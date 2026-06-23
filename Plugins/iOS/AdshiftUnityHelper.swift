@@ -106,6 +106,13 @@ public typealias DeepLinkCallback = ([String: Any]) -> Void
         }
     }
     
+    /// Sets branded RightLink domains (custom CNAMEs treated as attribution sources).
+    @objc public func setBrandedDomains(_ domains: [String]) {
+        Task { @MainActor in
+            Adshift.shared.brandedDomains = domains
+        }
+    }
+    
     /// Sets app open debounce interval
     @objc public func setAppOpenDebounceMs(_ milliseconds: Int) {
         Task { @MainActor in
@@ -183,6 +190,39 @@ public typealias DeepLinkCallback = ([String: Any]) -> Void
         }
     }
     
+    /// Logs an ad revenue event (Unity-compatible)
+    @objc public func logAdRevenue(
+        monetizationNetwork: String,
+        mediationNetwork: String,
+        currency: String,
+        revenue: Double,
+        additionalParameters: NSDictionary?,
+        completion: ((Error?) -> Void)?
+    ) {
+        guard let mediator = ASMediationNetwork(rawValue: mediationNetwork) else {
+            completion?(NSError(
+                domain: "AdShiftSDK",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Unknown mediationNetwork: \(mediationNetwork)"]
+            ))
+            return
+        }
+
+        let adRevenueData = ASAdRevenueData(
+            monetizationNetwork: monetizationNetwork,
+            mediationNetwork: mediator,
+            currencyIso4217Code: currency,
+            revenue: revenue
+        )
+
+        let additional = additionalParameters as? [String: Any]
+
+        Task { @MainActor in
+            await Adshift.shared.logAdRevenue(adRevenueData, additionalParameters: additional)
+            completion?(nil)
+        }
+    }
+
     /// Tracks a purchase event (Unity-compatible)
     @objc public func trackPurchase(
         productId: String,

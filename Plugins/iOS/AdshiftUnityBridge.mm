@@ -187,6 +187,34 @@ void _adshift_setCustomerUserId(const char* userId) {
     [[AdshiftUnityHelper shared] setCustomerUserId:userIdStr];
 }
 
+/// Sets branded RightLink hostnames (JSON array of strings)
+/// e.g. ["link.your-domain.com"]
+void _adshift_setBrandedDomains(const char* domainsJson) {
+    NSString* jsonStr = stringFromChar(domainsJson);
+    NSMutableArray<NSString*>* domains = [NSMutableArray array];
+
+    if (jsonStr != nil && jsonStr.length > 0) {
+        NSData* jsonData = [jsonStr dataUsingEncoding:NSUTF8StringEncoding];
+        if (jsonData != nil) {
+            NSError* error = nil;
+            id parsed = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                        options:0
+                                                          error:&error];
+            if (error == nil && [parsed isKindOfClass:[NSArray class]]) {
+                for (id item in (NSArray*)parsed) {
+                    if ([item isKindOfClass:[NSString class]] && [(NSString*)item length] > 0) {
+                        [domains addObject:(NSString*)item];
+                    }
+                }
+            } else if (error != nil) {
+                NSLog(@"[AdShift Unity] SetBrandedDomains failed - invalid JSON: %@", error.localizedDescription);
+            }
+        }
+    }
+
+    [[AdshiftUnityHelper shared] setBrandedDomains:domains];
+}
+
 /// Sets app open debounce interval
 void _adshift_setAppOpenDebounceMs(int milliseconds) {
     [[AdshiftUnityHelper shared] setAppOpenDebounceMs:milliseconds];
@@ -237,6 +265,36 @@ void _adshift_trackPurchase(const char* productId, double revenue, const char* c
                                                   currency:currencyStr 
                                              transactionId:txIdStr 
                                                 completion:^(NSDictionary* _Nullable response, NSError* _Nullable error) {
+        if (callbackObject != nil && callbackObject.length > 0) {
+            if (error != nil) {
+                unityCallback(callbackObject, "OnEventCallback", [error.localizedDescription UTF8String]);
+            } else {
+                unityCallback(callbackObject, "OnEventCallback", "success");
+            }
+        }
+    }];
+}
+
+/// Logs an ad revenue event from impression-level revenue data
+void _adshift_logAdRevenue(const char* monetizationNetwork, const char* mediationNetwork, const char* currency, double revenue, const char* additionalParametersJson, const char* callbackObjectName) {
+    NSString* monetizationStr = stringFromChar(monetizationNetwork);
+    NSString* mediationStr = stringFromChar(mediationNetwork);
+    NSString* currencyStr = stringFromChar(currency);
+    NSString* callbackObject = stringFromChar(callbackObjectName);
+    
+    if (monetizationStr == nil || mediationStr == nil || currencyStr == nil) {
+        NSLog(@"[AdShift Unity] LogAdRevenue failed - missing required parameters");
+        return;
+    }
+    
+    NSDictionary* additionalParams = additionalParametersJson ? dictionaryFromJson(additionalParametersJson) : nil;
+    
+    [[AdshiftUnityHelper shared] logAdRevenueWithMonetizationNetwork:monetizationStr
+                                                  mediationNetwork:mediationStr
+                                                          currency:currencyStr
+                                                           revenue:revenue
+                                              additionalParameters:additionalParams
+                                                        completion:^(NSError* _Nullable error) {
         if (callbackObject != nil && callbackObject.length > 0) {
             if (error != nil) {
                 unityCallback(callbackObject, "OnEventCallback", [error.localizedDescription UTF8String]);

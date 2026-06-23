@@ -163,6 +163,19 @@ namespace Adshift.Platform
             }
         }
 
+        public void SetBrandedDomains(string[] domains)
+        {
+            try
+            {
+                string json = StringArrayToJson(domains);
+                GetBridge()?.CallStatic("setBrandedDomains", json);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[AdShift Android] SetBrandedDomains failed: {e.Message}");
+            }
+        }
+
         public void SetAppOpenDebounceMs(int milliseconds)
         {
             try
@@ -202,6 +215,22 @@ namespace Adshift.Platform
             catch (Exception e)
             {
                 Debug.LogError($"[AdShift Android] TrackPurchase failed: {e.Message}");
+                callback?.Invoke(AdshiftResult.Failure(e.Message));
+            }
+        }
+
+        public void LogAdRevenue(string monetizationNetwork, string mediationNetwork, string currency, double revenue, Dictionary<string, object> additionalParameters, Action<AdshiftResult> callback)
+        {
+            AdshiftCallbackHandler.Instance.SetEventCallback(callback);
+
+            try
+            {
+                string additionalJson = additionalParameters != null ? DictionaryToJson(additionalParameters) : null;
+                GetBridge()?.CallStatic("logAdRevenue", monetizationNetwork, mediationNetwork, currency, revenue, additionalJson, CALLBACK_OBJECT_NAME);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[AdShift Android] LogAdRevenue failed: {e.Message}");
                 callback?.Invoke(AdshiftResult.Failure(e.Message));
             }
         }
@@ -355,6 +384,19 @@ namespace Adshift.Platform
         private static string EscapeJson(string s)
         {
             return s.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r");
+        }
+
+        private static string StringArrayToJson(string[] values)
+        {
+            if (values == null || values.Length == 0) return "[]";
+
+            var parts = new List<string>(values.Length);
+            foreach (var v in values)
+            {
+                if (v == null) continue;
+                parts.Add($"\"{EscapeJson(v)}\"");
+            }
+            return "[" + string.Join(",", parts) + "]";
         }
     }
 }

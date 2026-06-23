@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-05-08
+
+### Added
+
+- `AdshiftSDK.SetBrandedDomains(string[])` — register branded RightLink
+  hostnames (e.g. `link.your-domain.com`) so the SDK treats them as
+  attribution sources alongside the default `*.rightlink.me`. Must be called
+  before `Start()`. Requires also declaring the host in `AndroidManifest.xml`
+  intent-filter and the iOS Associated Domains entitlement.
+- `AdshiftSDK.LogAdRevenue(...)` — log impression-level ad revenue events for
+  attribution and SKAdNetwork conversion value calculation. Includes monetization
+  network, mediation network (with `Other` fallback), currency, revenue and
+  optional additional parameters. Native SDK enforces a $10/impression cap.
+
+### Changed
+
+- Bumped native iOS SDK pin: `AdshiftSDK 1.0.1` → `1.5.0` (via EDM4U).
+- Bumped native Android SDK pin: `com.adshift:android-sdk:2.0.3` → `2.1.0`
+  (via EDM4U).
+
 ## [1.0.0] - 2025-01-01
 
 ### Added

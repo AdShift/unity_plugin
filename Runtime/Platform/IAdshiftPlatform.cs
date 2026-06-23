@@ -59,6 +59,14 @@ namespace Adshift.Platform
         void SetCustomerUserId(string userId);
 
         /// <summary>
+        /// Configures the list of branded RightLink hostnames the SDK should
+        /// treat as attribution sources, in addition to the default
+        /// <c>*.rightlink.me</c>. Call BEFORE <see cref="Start"/>.
+        /// </summary>
+        /// <param name="domains">Branded hostnames (e.g. <c>"link.your-domain.com"</c>).</param>
+        void SetBrandedDomains(string[] domains);
+
+        /// <summary>
         /// Sets the debounce interval for automatic APP_OPEN events.
         /// </summary>
         /// <param name="milliseconds">Minimum time between APP_OPEN events in ms.</param>
@@ -87,6 +95,23 @@ namespace Adshift.Platform
             double revenue,
             string currency,
             string transactionId,
+            Action<AdshiftResult> callback);
+
+        /// <summary>
+        /// Logs an ad revenue event from impression-level revenue data (ILRD).
+        /// </summary>
+        /// <param name="monetizationNetwork">Who served the ad (e.g., "facebook", "unity_ads").</param>
+        /// <param name="mediationNetwork">Mediator SDK identifier (e.g., "applovin_max").</param>
+        /// <param name="currency">ISO 4217 currency code.</param>
+        /// <param name="revenue">Impression revenue amount.</param>
+        /// <param name="additionalParameters">Optional extra parameters.</param>
+        /// <param name="callback">Optional callback with tracking result.</param>
+        void LogAdRevenue(
+            string monetizationNetwork,
+            string mediationNetwork,
+            string currency,
+            double revenue,
+            Dictionary<string, object> additionalParameters,
             Action<AdshiftResult> callback);
 
         // ============ Consent (GDPR/DMA) ============
